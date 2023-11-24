@@ -29,6 +29,12 @@ public class BoardRepositoryTests {
                     .build();
 
             Board result = boardRepository.save(board);
+            //BoardRepository 인터페이스에는 그 어떤 메소드도 선언해두지 않았지만, JpaRepository 를 extends했음
+            //이렇게 JpaRepository 인터페이스를 상속한 인터페에이스를 선언하고, 그 인터페이스에
+            //Entity 타입과 Id 타입을 지정해주는 것이 Jpa를 사용해 개발하기 위한 첫 준비임.
+            //save()는 현재의 영속 컨텍스트 내에 데이터가 존재하는지 찾아 본 후, 해당 엔티티 객체가 없을 때는 insert를, 존재할 때는
+            //update를 자동으로 실행함
+            //DB에 저장된 데이터와 동기화된 Board객체가 반환되게 됨.
             log.info("BNO: " + result.getBno());
         });
     }
@@ -75,6 +81,49 @@ public class BoardRepositoryTests {
 //        PageRequest Pageable의 구현체
 
         Pageable pageable = PageRequest.of(0,10, Sort.by("bno").ascending());
+        //0페이지부터, 10개씩, bno로 sorting 하는데, asc 로.
         log.info(pageable);
+    }
+
+    @Test
+    public void testSearch1(){
+        //2 apge order by bno desc
+        Pageable pageable = PageRequest.of(1,10,Sort.by("bno").descending());
+        boardRepository.search1(pageable);
+    }
+
+    @Test
+    public void testSearchAll(){
+
+        String[] types = {"t","c","w"};
+
+        String keyword = "1";
+
+        Pageable pageable = PageRequest.of(0,10,Sort.by("bno").descending());
+
+        Page<Board> result = boardRepository.searchAll(types,keyword,pageable);
+    }
+
+    @Test
+    public void testSearchAll2(){
+
+        String[] types = {"t","c","w"};
+
+        String keyword = "1";
+
+        Pageable pageable = PageRequest.of(0,10,Sort.by("bno").descending());
+
+        Page<Board> result = boardRepository.searchAll(types,keyword,pageable);
+
+        //total pages
+        log.info(result.getTotalPages());
+
+        //page size
+        log.info(result.getSize());
+        log.info(result.getNumber());
+        log.info(result.hasNext() +": " + result.hasPrevious());
+
+        result.getContent().forEach(board -> log.info(board));
+
     }
 }
