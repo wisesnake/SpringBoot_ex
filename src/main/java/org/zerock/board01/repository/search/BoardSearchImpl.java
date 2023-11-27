@@ -38,10 +38,16 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
     public Page<Board> searchAll(String[] types, String keyword, Pageable pageable) {
 
         QBoard board = QBoard.board;
+        //QBoard 클래스는 Querydsl이 Board 엔터티에 대한 쿼리를 생성하는 데 필요한 메타모델 정보를 담고 있는 클래스입니다.
+        // 이 클래스는 Querydsl이 빌드되는 과정에서 자동으로 생성되며, 엔터티의 필드, 관계, 메소드 등에 대한 정보를 정적으로 제공합니다.
+        // 이러한 메타모델 클래스를 사용하면 컴파일 타임에 타입 안정성을 확보하면서 동적인 쿼리를 작성할 수 있습니다.
+        // 코드에서는 QBoard.board와 같이 사용하여 엔터티의 속성을 참조하고 쿼리를 생성할 수 있습니다.
+
 
         JPQLQuery query = from(board);
-        //query객체를 통해 실행되는 JPQL쿼리는 from board를 사용함.
-        //JPQL = Java Persistence Query Language, DB 테이블을 대상으로 쿼리하는게 아니라, 엔티티 객체를 대상으로 쿼리한다.
+        // JPQLQuery는 Querydsl에서 제공하는 인터페이스로, JPQL 쿼리를 표현하고 실행하는 데 사용됩니다.
+        // from(board)는 board라는 엔터티에 대한 JPQL 쿼리를 시작한다는 것을 의미합니다.
+        //이렇게 함으로써 Querydsl은 Board 엔터티를 대상으로 하는 JPQL 쿼리를 생성할 수 있게 됩니다.
 
         if((types != null && types.length > 0) && keyword != null){ // 검색조건(types) 와 키워드(keyword) 있을 때,
 
@@ -72,9 +78,12 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         this.getQuerydsl().applyPagination(pageable,query);
 
         List<Board> list = query.fetch();
+        //query를 실행하고, 결과를 리스트로 가져옴, 실행 결과는 Board엔티티에 해당하는 레코드들.
 
         long count = query.fetchCount();
+        //페이징처리를 위해 전체 쿼리 결과의 개수를 가져옴.
 
         return new PageImpl<>(list,pageable,count);
+        //현재 페이지에 대한 엔티티리스트 list, 페이지 정보(번호,크기,정렬방법 등) pageable, 전체 결과의 개수 count를 Page객체로 만들어서 리턴함.
     }
 }

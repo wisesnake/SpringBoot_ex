@@ -81,7 +81,13 @@ public class BoardRepositoryTests {
 //        PageRequest Pageable의 구현체
 
         Pageable pageable = PageRequest.of(0,10, Sort.by("bno").ascending());
-        //0페이지부터, 10개씩, bno로 sorting 하는데, asc 로.
+        //0페이지부터, 10개씩, bno로 sorting 하는데, asc 로 등의 페이징 처리를 위한 정보를 페이징 메소드에 넘기기 위해
+        //파라미터화 하는 pageable 객체를 생성함.
+
+        Page<Board> result = boardRepository.findAll(pageable);
+        //위에서 페이징 처리를 위한 정보를 담은 pageable를 파라미터로 findAll메소드 실행하여 리턴받은 데이터는
+        //Page<T> 타입으로 받을 수 있음. 해당 타입은 단순 page 쿼리 검색 결과의 목록뿐만 아니라, 페이징 처리 데이터가
+        //많은 경우에는 count처리까지 자동으로 실행함.
         log.info(pageable);
     }
 
@@ -126,4 +132,6 @@ public class BoardRepositoryTests {
         result.getContent().forEach(board -> log.info(board));
 
     }
+
+
 }
